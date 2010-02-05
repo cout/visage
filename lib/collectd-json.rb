@@ -58,7 +58,8 @@ class CollectdJSON
 
       # append the line color onto the end of the data set
       plugin_instance[:data].each_key do |source|
-        plugin_instance[:colors] = color_for(:host => opts[:host], :plugin => opts[:plugin], :plugin_instance => name)
+        plugin_instance[:colors] ||= []
+        plugin_instance[:colors] << color_for(:host => opts[:host], :plugin => opts[:plugin], :plugin_instance => name)
       end
       values[opts[:host]][opts[:plugin]].merge!({ name => plugin_instance})
     end
@@ -103,6 +104,7 @@ class CollectdJSON
       base_plugin = opts[:plugin].split('-').first
       if plugin_colors = @colors[base_plugin]
         color = plugin_colors[opts[:plugin_instance]]
+        color ? color : fallback_color
       else
         fallback_color
       end
@@ -115,8 +117,12 @@ class CollectdJSON
   def fallback_color
     fallbacks = @fallback_colors.to_a.sort_by {|pair| pair[1]['fallback_order'] }
     fallback = fallbacks.find { |color| !@used_fallbacks.include?(color) }
-    @used_fallbacks << fallback
-    fallback[1]['color'] || "#000"
+    if fallback then
+      @used_fallbacks << fallback
+      return fallback[1]['color']
+    else
+      return '#000'
+    end
   end
 
   class << self
