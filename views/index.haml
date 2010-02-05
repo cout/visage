@@ -38,7 +38,8 @@
               gridHeight: 200,
               shade: #{Visage::Config.shade || false},
               pluginInstance: '#{plugin_instances || ''}',
-              name: '#{plugin} on #{host}'
+              name: '#{plugin} on #{host}',
+              cf: '#{@profile.function}'
             });
           });
   

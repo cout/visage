@@ -39,13 +39,14 @@ class CollectdJSON
   # Attempt to structure the JSON reasonably sanely, so the consumer doesn't
   # have to do a lot of computationally expensive work when processing it.
   def encode(opts={})
+    opts[:function] ||= "AVERAGE"
     opts[:start] ||= (Time.now - 3600).to_i
     opts[:end]   ||= (Time.now).to_i
 
     values = { opts[:host] => { opts[:plugin] => {} } }
    
     opts[:rrds].each_pair do |name, rrd|
-      rrd_data = rrd.fetch(:function => "AVERAGE", :start => opts[:start], :end => opts[:end])
+      rrd_data = rrd.fetch(:function => opts[:function], :start => opts[:start], :end => opts[:end])
         plugin_instance = {:start => rrd_data[:start], :finish => rrd_data[:finish], :data => rrd_data[:data]}
         
         # filter out NaNs, so yajl doesn't choke

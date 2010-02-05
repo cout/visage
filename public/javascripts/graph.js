@@ -19,7 +19,8 @@ var visageBase = new Class({
         gridBorderColour: '#ccc',
         shade: false,
         secureJSON: false,
-        httpMethod: 'get'
+        httpMethod: 'get',
+        cf: 'AVERAGE'
     },
     initialize: function(element, host, plugin, options) {
         this.parentElement = element;
@@ -29,6 +30,7 @@ var visageBase = new Class({
         this.buildGraphHeader();
         this.buildGraphContainer();
         this.canvas = Raphael(this.graphContainer, this.options.width, this.options.height);
+        this.requestData = { 'function' : this.options.cf };
         this.getData(); // calls graphData
     },
     dataURL: function() {
@@ -380,6 +382,7 @@ var visageGraph = new Class({
 	                                currentTimePeriod = option.get('html') // is this setting a global?
 	                            }, this);
                             }
+                            data.set('function', this.options.cf);
                             this.requestData = data
 
                             /* Nuke graph + labels. */
